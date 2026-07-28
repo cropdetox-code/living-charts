@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Backyard Build — Double Gantt</title>
+<title>Backyard Build — Calendar + Double Gantt</title>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root { --ink:#22303B; --paper:#F6F3EC; }
@@ -8,22 +8,239 @@
 body { margin:0; background:var(--paper); color:var(--ink); font-family:Inter,system-ui,sans-serif; }
 .wrap { max-width:1280px; margin:0 auto; padding:28px 20px 40px; }
 h1 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:clamp(26px,4vw,40px); margin:0; letter-spacing:-0.5px; }
+h2 { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:19px; letter-spacing:1px; margin:34px 0 10px; }
 .sub { color:#8C948F; font-size:14px; margin:6px 0 18px; }
 .scroller { overflow-x:auto; background:#FDFCF8; border:1px solid #E4DECF; border-radius:14px; padding:10px 0 4px; }
 svg { display:block; min-width:1421px; }
-.lbl { font:500 12.5px Inter; fill:var(--ink); }
-.note { font:400 11px Inter; fill:#8C948F; }
-.axis { font:600 11px Inter; fill:#8C948F; }
-.today { font:800 10px 'Bricolage Grotesque'; fill:#D94F2B; letter-spacing:1px; }
-.tick { font:600 12px Inter; }
-.dep { font:600 10.5px Inter; fill:#D94F2B; }
+.lbl { font:500 12.5px Inter; fill:var(--ink); } .note { font:400 11px Inter; fill:#8C948F; }
+.axis { font:600 11px Inter; fill:#8C948F; } .today { font:800 10px 'Bricolage Grotesque'; fill:#D94F2B; letter-spacing:1px; }
+.tick { font:600 12px Inter; } .dep { font:600 10.5px Inter; fill:#D94F2B; }
 .lane { font-family:'Bricolage Grotesque'; font-weight:800; font-size:15px; letter-spacing:2px; }
 .legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:14px; font-size:12.5px; color:#8C948F; align-items:center; }
 .sw { display:inline-block; width:22px; height:11px; border-radius:3px; margin-right:6px; vertical-align:middle; }
 .foot { margin-top:12px; font-size:11.5px; color:#8C948F; border-top:1px solid #E4DECF; padding-top:10px; }
+/* calendar */
+.month { background:#FDFCF8; border:1px solid #E4DECF; border-radius:14px; padding:16px 14px 10px; margin-bottom:22px; }
+.mname { font-family:'Bricolage Grotesque'; font-weight:800; font-size:20px; letter-spacing:1px; margin:0 0 10px 4px; }
+.dow { display:grid; grid-template-columns:repeat(7,1fr); font:600 11px Inter; color:#8C948F; letter-spacing:1px; text-transform:uppercase; margin-bottom:4px; }
+.dow span { padding-left:6px; }
+.wk { position:relative; display:grid; grid-template-columns:repeat(7,1fr); border-top:1px solid #E4DECF; }
+.day { border-left:1px solid #F0EADC; min-height:100%; }
+.day:first-child { border-left:none; }
+.outm { background:#F6F3EC66; }
+.dnum { display:inline-block; font:600 12px Inter; margin:5px 0 0 6px; }
+.dim { color:#C9C4B6; }
+.td { background:#D94F2B; color:#fff; border-radius:10px; padding:1px 7px; }
+.ev { position:absolute; height:16px; border-radius:4px; font:500 10.5px Inter; color:#fff; padding:1px 5px; white-space:nowrap; overflow:visible; }
+.ev[style*="dashed"] { color:#22303B; }
+.mk { position:absolute; font:600 10.5px Inter; white-space:nowrap; }
+.mk span { color:#22303B; font-weight:500; }
+@media (max-width:640px) { .ev { font-size:9px; padding:1px 3px; } .mk { font-size:9px; } }
 </style></head><body><div class="wrap">
 <h1>Backyard build — two clocks, one deadline</h1>
-<div class="sub">Pool build (Lazy Day Pools) and the owner-builder pool house &amp; deck, side by side with cross-dependencies. Earliest fill <b style="color:#12707F">~25–28 Sep</b> (tree permit pushed the dig to ~24 Aug; sequence per Lazy Day info sheet) · Mum lands ~18 Sep · Updated 28 Jul 2026</div>
+<div class="sub">Pool build (Lazy Day Pools) in <b style="color:#12707F">teal</b> · owner-builder pool house &amp; deck in <b style="color:#8A5A32">brown</b>. Earliest fill <b style="color:#12707F">~25–28 Sep</b> · Mum lands ~18 Sep · Updated 28 Jul 2026</div>
+
+<h2>CALENDAR VIEW</h2>
+<div class="month"><div class="mname">July 2026</div><div class="dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<div class="wk" style="height:50px">
+<div class="day outm" style="grid-column:1"><span class="dnum dim">29</span></div>
+<div class="day outm" style="grid-column:2"><span class="dnum dim">30</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">1</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">2</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">3</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">4</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">5</span></div>
+</div>
+<div class="wk" style="height:50px">
+<div class="day" style="grid-column:1"><span class="dnum">6</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">7</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">8</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">9</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">10</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">11</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">12</span></div>
+</div>
+<div class="wk" style="height:50px">
+<div class="day" style="grid-column:1"><span class="dnum">13</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">14</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">15</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">16</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">17</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">18</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">19</span></div>
+</div>
+<div class="wk" style="height:69px">
+<div class="day" style="grid-column:1"><span class="dnum">20</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">21</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">22</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">23</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">24</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">25</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">26</span></div>
+<div class="ev" style="left:calc(42.857142857142854% + 3px); width:calc(57.14285714285714% - 6px); top:26px; background:#93A99B;">Soil test → results</div>
+</div>
+<div class="wk" style="height:88px">
+<div class="day" style="grid-column:1"><span class="dnum">27</span></div>
+<div class="day today" style="grid-column:2"><span class="dnum td">28</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">29</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">30</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">31</span></div>
+<div class="day outm" style="grid-column:6"><span class="dnum dim">1</span></div>
+<div class="day outm" style="grid-column:7"><span class="dnum dim">2</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(71.42857142857143% - 6px); top:26px; background:#93A99B;"></div>
+<div class="ev" style="left:calc(14.285714285714285% + 3px); width:calc(57.14285714285714% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Council tree permit</div>
+</div>
+</div>
+<div class="month"><div class="mname">August 2026</div><div class="dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<div class="wk" style="height:88px">
+<div class="day outm" style="grid-column:1"><span class="dnum dim">27</span></div>
+<div class="day outm" style="grid-column:2"><span class="dnum dim">28</span></div>
+<div class="day outm" style="grid-column:3"><span class="dnum dim">29</span></div>
+<div class="day outm" style="grid-column:4"><span class="dnum dim">30</span></div>
+<div class="day outm" style="grid-column:5"><span class="dnum dim">31</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">1</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">2</span></div>
+<div class="ev" style="left:calc(71.42857142857143% + 3px); width:calc(28.57142857142857% - 6px); top:26px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(71.42857142857143% + 3px); width:calc(28.57142857142857% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Windows & doors lead (3–4 wk)</div>
+<div class="mk" style="left:calc(71.42857142857143% + 3px); top:67px; color:#D94F2B">◆ <span>Order windows & doors</span></div>
+</div>
+<div class="wk" style="height:107px">
+<div class="day" style="grid-column:1"><span class="dnum">3</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">4</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">5</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">6</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">7</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">8</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">9</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(100.0% - 6px); top:26px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(100.0% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(100.0% - 6px); top:64px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Engineer drawings</div>
+<div class="mk" style="left:calc(0.0% + 3px); top:86px; color:#D94F2B">◆ <span>Lock engineer + certifier</span></div>
+<div class="mk" style="left:calc(14.285714285714285% + 3px); top:86px; color:#D94F2B">◆ <span>Book pool fence</span></div>
+</div>
+<div class="wk" style="height:107px">
+<div class="day" style="grid-column:1"><span class="dnum">10</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">11</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">12</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">13</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">14</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">15</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">16</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(100.0% - 6px); top:26px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(100.0% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(71.42857142857143% - 6px); top:64px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+</div>
+<div class="wk" style="height:88px">
+<div class="day" style="grid-column:1"><span class="dnum">17</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">18</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">19</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">20</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">21</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">22</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">23</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(100.0% - 6px); top:26px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(57.14285714285714% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(57.14285714285714% + 3px); width:calc(14.285714285714285% - 6px); top:45px; background:#8A5A32;">Tree removal — Viking</div>
+</div>
+<div class="wk" style="height:126px">
+<div class="day" style="grid-column:1"><span class="dnum">24</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">25</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">26</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">27</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">28</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">29</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">30</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(71.42857142857143% - 6px); top:26px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(71.42857142857143% - 6px); top:45px; background:#12707F44; border:1.5px dashed #12707F;">Dig + shotcrete</div>
+<div class="ev" style="left:calc(57.14285714285714% + 3px); width:calc(42.857142857142854% - 6px); top:64px; background:#12707F44; border:1.5px dashed #12707F;">Shell cure (2 wks)</div>
+<div class="ev" style="left:calc(57.14285714285714% + 3px); width:calc(42.857142857142854% - 6px); top:83px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Windows in + cladding</div>
+</div>
+<div class="wk" style="height:126px">
+<div class="day" style="grid-column:1"><span class="dnum">31</span></div>
+<div class="day outm" style="grid-column:2"><span class="dnum dim">1</span></div>
+<div class="day outm" style="grid-column:3"><span class="dnum dim">2</span></div>
+<div class="day outm" style="grid-column:4"><span class="dnum dim">3</span></div>
+<div class="day outm" style="grid-column:5"><span class="dnum dim">4</span></div>
+<div class="day outm" style="grid-column:6"><span class="dnum dim">5</span></div>
+<div class="day outm" style="grid-column:7"><span class="dnum dim">6</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(14.285714285714285% - 6px); top:26px; background:#12707F44; border:1.5px dashed #12707F;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(14.285714285714285% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(14.285714285714285% - 6px); top:64px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Plumber (during cure)</div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(14.285714285714285% - 6px); top:83px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Neighbour fence</div>
+</div>
+</div>
+<div class="month"><div class="mname">September 2026</div><div class="dow"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+<div class="wk" style="height:126px">
+<div class="day outm" style="grid-column:1"><span class="dnum dim">31</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">1</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">2</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">3</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">4</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">5</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">6</span></div>
+<div class="ev" style="left:calc(14.285714285714285% + 3px); width:calc(85.71428571428571% - 6px); top:26px; background:#12707F44; border:1.5px dashed #12707F;"></div>
+<div class="ev" style="left:calc(14.285714285714285% + 3px); width:calc(85.71428571428571% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(14.285714285714285% + 3px); width:calc(71.42857142857143% - 6px); top:64px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(14.285714285714285% + 3px); width:calc(57.14285714285714% - 6px); top:83px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+</div>
+<div class="wk" style="height:126px">
+<div class="day" style="grid-column:1"><span class="dnum">7</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">8</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">9</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">10</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">11</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">12</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">13</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(71.42857142857143% - 6px); top:26px; background:#12707F44; border:1.5px dashed #12707F;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(71.42857142857143% - 6px); top:45px; background:#8A5A3244; border:1.5px dashed #8A5A32;">FC sheeting (barrier)</div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(42.857142857142854% - 6px); top:64px; background:#8A5A3244; border:1.5px dashed #8A5A32;">Electrician</div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(14.285714285714285% - 6px); top:83px; background:#8A5A3244; border:1.5px dashed #8A5A32;"></div>
+<div class="ev" style="left:calc(28.57142857142857% + 3px); width:calc(71.42857142857143% - 6px); top:83px; background:#8A5A32;">Deck build</div>
+</div>
+<div class="wk" style="height:88px">
+<div class="day" style="grid-column:1"><span class="dnum">14</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">15</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">16</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">17</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">18</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">19</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">20</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(42.857142857142854% - 6px); top:26px; background:#8A5A32;"></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(42.857142857142854% - 6px); top:45px; background:#12707F44; border:1.5px dashed #12707F;">Coping tiles</div>
+<div class="ev" style="left:calc(42.857142857142854% + 3px); width:calc(28.57142857142857% - 6px); top:26px; background:#8A5A32;">Pool fence install — absolut</div>
+<div class="mk" style="left:calc(57.14285714285714% + 3px); top:67px; color:#D94F2B">◯ <span>Mum lands from the UK</span></div>
+</div>
+<div class="wk" style="height:69px">
+<div class="day" style="grid-column:1"><span class="dnum">21</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">22</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">23</span></div>
+<div class="day" style="grid-column:4"><span class="dnum">24</span></div>
+<div class="day" style="grid-column:5"><span class="dnum">25</span></div>
+<div class="day" style="grid-column:6"><span class="dnum">26</span></div>
+<div class="day" style="grid-column:7"><span class="dnum">27</span></div>
+<div class="ev" style="left:calc(0.0% + 3px); width:calc(42.857142857142854% - 6px); top:26px; background:#12707F44; border:1.5px dashed #12707F;">Final inspection + cert</div>
+<div class="ev" style="left:calc(42.857142857142854% + 3px); width:calc(28.57142857142857% - 6px); top:26px; background:#12707F44; border:1.5px dashed #12707F;">Pebble + acid wash</div>
+<div class="mk" style="left:calc(57.14285714285714% + 3px); top:48px; color:#12707F">◆ <span>Fill the pool (~25–28 Sep)</span></div>
+</div>
+<div class="wk" style="height:50px">
+<div class="day" style="grid-column:1"><span class="dnum">28</span></div>
+<div class="day" style="grid-column:2"><span class="dnum">29</span></div>
+<div class="day" style="grid-column:3"><span class="dnum">30</span></div>
+<div class="day outm" style="grid-column:4"><span class="dnum dim">1</span></div>
+<div class="day outm" style="grid-column:5"><span class="dnum dim">2</span></div>
+<div class="day outm" style="grid-column:6"><span class="dnum dim">3</span></div>
+<div class="day outm" style="grid-column:7"><span class="dnum dim">4</span></div>
+</div>
+</div>
+<div class="legend">
+<span><span class="sw" style="background:#12707F"></span>Pool build</span>
+<span><span class="sw" style="background:#8A5A32"></span>Pool house &amp; deck (owner-builder)</span>
+<span><span class="sw" style="background:#93A99B"></span>Done</span>
+<span><span class="sw" style="border:1.5px dashed #8C948F; background:transparent"></span>Dashed = estimate, not a booking</span>
+<span style="color:#D94F2B">◆ booking deadline · ◯ Mum lands</span>
+</div>
+
+<h2>TIMELINE VIEW (DEPENDENCIES)</h2>
 <div class="scroller"><svg viewBox="0 0 1421 950" width="1421" height="950" role="img" aria-label="Double Gantt chart of the pool build and owner-builder works">
 <defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1 L9 5 L1 9" fill="none" stroke="#D94F2B" stroke-width="2" stroke-linecap="round"/></marker></defs>
 <line x1="240" y1="40" x2="240" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="240" y="34" text-anchor="middle" class="axis">20 Jul</text><line x1="334" y1="40" x2="334" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="334" y="34" text-anchor="middle" class="axis">27 Jul</text><line x1="429" y1="40" x2="429" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="429" y="34" text-anchor="middle" class="axis">3 Aug</text><line x1="524" y1="40" x2="524" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="524" y="34" text-anchor="middle" class="axis">10 Aug</text><line x1="618" y1="40" x2="618" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="618" y="34" text-anchor="middle" class="axis">17 Aug</text><line x1="712" y1="40" x2="712" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="712" y="34" text-anchor="middle" class="axis">24 Aug</text><line x1="807" y1="40" x2="807" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="807" y="34" text-anchor="middle" class="axis">31 Aug</text><line x1="902" y1="40" x2="902" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="902" y="34" text-anchor="middle" class="axis">7 Sep</text><line x1="996" y1="40" x2="996" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="996" y="34" text-anchor="middle" class="axis">14 Sep</text><line x1="1090" y1="40" x2="1090" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="1090" y="34" text-anchor="middle" class="axis">21 Sep</text><line x1="1185" y1="40" x2="1185" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="1185" y="34" text-anchor="middle" class="axis">28 Sep</text><line x1="1280" y1="40" x2="1280" y2="946" stroke="#E4DECF" stroke-width="1"/><text x="1280" y="34" text-anchor="middle" class="axis">5 Oct</text><line x1="348" y1="40" x2="348" y2="946" stroke="#D94F2B" stroke-width="2"/><text x="348" y="34" text-anchor="middle" class="today">TODAY</text><text x="18" y="66" class="lane" fill="#12707F">POOL BUILD — LAZY DAY POOLS</text><rect x="18" y="80" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="101.0" text-anchor="end" class="lbl">Contract signed — Lazy Day</text><text x="240" y="102.0" class="tick" fill="#93A99B">✓ done</text><text x="228" y="135.0" text-anchor="end" class="lbl">Dig + shotcrete (same week)</text><rect x="712" y="123.0" width="68" height="16" rx="4" fill="#12707F" fill-opacity="0.45" stroke="#12707F" stroke-width="1.4" stroke-dasharray="4 3"/><text x="791" y="135.0" class="note">earliest 22 Aug — sheet: dig & spray in one week</text><rect x="18" y="148" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="169.0" text-anchor="end" class="lbl">Shell cure (2 wks, per info sheet)</text><rect x="766" y="157.0" width="202" height="16" rx="4" fill="#12707F" fill-opacity="0.45" stroke="#12707F" stroke-width="1.4" stroke-dasharray="4 3"/><text x="979" y="169.0" class="note">trades work during cure</text><text x="228" y="203.0" text-anchor="end" class="lbl">Coping tiles — ordered & laid</text><rect x="996" y="191.0" width="40" height="16" rx="4" fill="#12707F" fill-opacity="0.45" stroke="#12707F" stroke-width="1.4" stroke-dasharray="4 3"/><text x="1047" y="203.0" class="note">after 2-wk cure</text><rect x="18" y="216" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="237.0" text-anchor="end" class="lbl">Final fence inspection + certification</text><rect x="1090" y="225.0" width="40" height="16" rx="4" fill="#12707F" fill-opacity="0.45" stroke="#12707F" stroke-width="1.4" stroke-dasharray="4 3"/><text x="1141" y="237.0" class="note">certification releases pebble</text><text x="228" y="271.0" text-anchor="end" class="lbl">Pebble + acid wash</text><rect x="1131" y="259.0" width="27" height="16" rx="4" fill="#12707F" fill-opacity="0.45" stroke="#12707F" stroke-width="1.4" stroke-dasharray="4 3"/><rect x="18" y="284" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="305.0" text-anchor="end" class="lbl">Fill the pool</text><path d="M1144 292.0 L1153 301.0 L1144 310.0 L1135 301.0 Z" fill="#12707F"/><text x="1158" y="305.0" class="note">hose in as they depart — ~25–28 Sep (was 15 Sep)</text><text x="228" y="339.0" text-anchor="end" class="lbl">Mum lands from the UK</text><circle cx="1050" cy="335.0" r="6" fill="none" stroke="#D94F2B" stroke-width="2.5"/><text x="1062" y="339.0" class="note">~18 Sep · filling while she's here</text><text x="18" y="402" class="lane" fill="#8A5A32">POOL HOUSE &amp; DECK — OWNER-BUILDER</text><rect x="18" y="416" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="437.0" text-anchor="end" class="lbl">Soil test → results</text><rect x="280" y="425.0" width="122" height="16" rx="4" fill="#93A99B"/><text x="413" y="437.0" class="note">results ~31 Jul</text><text x="228" y="471.0" text-anchor="end" class="lbl">Council tree permit — Katie</text><rect x="348" y="459.0" width="324" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="683" y="471.0" class="note">~$200 council + $100+gst admin</text><rect x="18" y="484" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="505.0" text-anchor="end" class="lbl">Tree removal — Viking</text><rect x="672" y="493.0" width="14" height="16" rx="4" fill="#8A5A32"/><text x="697" y="505.0" class="note">21 Aug — permit pending</text><text x="228" y="539.0" text-anchor="end" class="lbl">Order windows & doors</text><path d="M402 526.0 L411 535.0 L402 544.0 L393 535.0 Z" fill="#D94F2B"/><text x="416" y="539.0" class="note">order by ~1 Aug</text><rect x="18" y="552" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="573.0" text-anchor="end" class="lbl">Windows & doors lead time</text><rect x="402" y="561.0" width="378" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="791" y="573.0" class="note">3–4 wk</text><text x="228" y="607.0" text-anchor="end" class="lbl">Lock engineer + certifier</text><path d="M429 594.0 L438 603.0 L429 612.0 L420 603.0 Z" fill="#D94F2B"/><text x="443" y="607.0" class="note">by ~3 Aug</text><rect x="18" y="620" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="641.0" text-anchor="end" class="lbl">Engineer drawings</text><rect x="429" y="629.0" width="162" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="602" y="641.0" class="note">PTG / DCO tbc</text><text x="228" y="675.0" text-anchor="end" class="lbl">Book pool fence</text><path d="M442 662.0 L451 671.0 L442 680.0 L433 671.0 Z" fill="#D94F2B"/><text x="456" y="675.0" class="note">by ~4 Aug</text><rect x="18" y="688" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="709.0" text-anchor="end" class="lbl">Windows in + cladding (Hardie/FC)</text><rect x="766" y="697.0" width="122" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="899" y="709.0" class="note">not gated by trees</text><text x="228" y="743.0" text-anchor="end" class="lbl">Plumber — during cure</text><rect x="807" y="731.0" width="68" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="886" y="743.0" class="note">trenches open for sparky · stub in heater bypass</text><rect x="18" y="756" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="777.0" text-anchor="end" class="lbl">Shared neighbour fence — part of pool barrier</text><rect x="807" y="765.0" width="108" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="926" y="777.0" class="note">$140 × 15 panels · only after dig — needs their driveway open</text><text x="228" y="811.0" text-anchor="end" class="lbl">FC sheeting over neighbour's back fence</text><rect x="902" y="799.0" width="68" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="981" y="811.0" class="note">part of barrier · during cure</text><rect x="18" y="824" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="845.0" text-anchor="end" class="lbl">Electrician — earth + filtration power</text><rect x="902" y="833.0" width="40" height="16" rx="4" fill="#8A5A32" fill-opacity="0.45" stroke="#8A5A32" stroke-width="1.4" stroke-dasharray="4 3"/><text x="953" y="845.0" class="note">MUST precede deck (sheet)</text><text x="228" y="879.0" text-anchor="end" class="lbl">Deck build — UltraDeck Blonde Oak</text><rect x="928" y="867.0" width="108" height="16" rx="4" fill="#8A5A32"/><text x="1047" y="879.0" class="note">after electrical</text><rect x="18" y="892" width="1385" height="34" fill="#FFFFFF" opacity="0.5"/><text x="228" y="913.0" text-anchor="end" class="lbl">Pool fence install — absolut</text><rect x="1036" y="901.0" width="27" height="16" rx="4" fill="#8A5A32"/><text x="1074" y="913.0" class="note">after deck · gate closes driveway access</text><path d="M686 501.0 C 714 501.0, 682 131.0, 710 131.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><text x="706" y="316.0" class="dep">trees clear the dig</text><path d="M780 131.0 C 808 131.0, 777 773.0, 805 773.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><text x="800" y="452.0" class="dep">dig frees the driveway</text><path d="M780 131.0 C 808 131.0, 777 739.0, 805 739.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><path d="M942 841.0 C 970 841.0, 898 875.0, 926 875.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><path d="M1036 875.0 C 1064 875.0, 1006 909.0, 1034 909.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><path d="M1063 909.0 C 1091 909.0, 1060 233.0, 1088 233.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><text x="1083" y="571.0" class="dep">full barrier up → final inspection</text><path d="M1130 233.0 C 1158 233.0, 1101 267.0, 1129 267.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/><text x="960" y="250.0" class="dep">sign-off releases pebble</text><path d="M1158 267.0 C 1186 267.0, 1105 301.0, 1133 301.0" fill="none" stroke="#D94F2B" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#ah)"/></svg></div>
