@@ -1,37 +1,89 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<!doctype html>
+<html lang="en" data-theme="ink">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Living Charts</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<title>my agentic life</title>
+<meta name="theme-color" content="#2A2622">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Caveat:wght@600&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#22303B;--paper:#F6F3EC;--mute:#8C948F;--line:#E4DECF}
+/* Same token block as /orbit/ — the shelf and the Orbit are one surface. */
+:root[data-theme="paper"]{ --bg:#F7F6F2; --surface:#FDFCF8; --fg:#2A2622; --fg2:#6B6660; --mute:#8C948F; --line:#BEBCB8; --speck:transparent; }
+:root[data-theme="ink"]{ --bg:#2A2622; --surface:#34302B; --fg:#F7F6F2; --fg2:#C9C4BC; --mute:#9A938B; --line:rgba(247,246,242,.16); --speck:rgba(247,246,242,.05); }
+:root{
+  --orange:#E0603C; --green:#5BA572; --yellow:#FBE573; --grey:#B0A89D;
+  --disp:'Space Grotesk',system-ui,sans-serif; --body:'Inter',system-ui,sans-serif; --hand:'Caveat',cursive;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,system-ui,sans-serif}
-.wrap{max-width:640px;margin:0 auto;padding:40px 20px 60px}
-h1{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(30px,7vw,44px);margin:0;letter-spacing:-.5px}
-.sub{color:var(--mute);font-size:14px;margin:8px 0 30px}
-a.card{display:block;text-decoration:none;color:inherit;background:#FDFCF8;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px;transition:transform .12s ease}
-a.card:hover{transform:translateY(-2px)}
-.tag{display:inline-block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;padding:3px 10px;border-radius:999px;color:#fff;margin-bottom:8px}
-.name{font-weight:600;font-size:17px}
-.meta{color:var(--mute);font-size:12.5px;margin-top:4px}
-.empty{color:var(--mute);font-size:13.5px;border:1.5px dashed var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px}
+html,body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body)}
+body{min-height:100vh;-webkit-font-smoothing:antialiased;background-image:radial-gradient(var(--speck) .5px,transparent .6px);background-size:4px 4px}
+.wrap{max-width:760px;margin:0 auto;padding:44px 24px 72px}
+
+.eyebrow{font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--fg2)}
+h1{font-family:var(--disp);font-size:clamp(30px,7vw,38px);font-weight:700;letter-spacing:-.015em;margin:8px 0 6px}
+.sub{color:var(--fg2);font-size:14px;line-height:1.5;max-width:56ch;margin:0}
+
+/* The front door. Everything else on this page is a chart; this is the map. */
+.door{display:block;text-decoration:none;color:inherit;margin:18px 0 40px;padding:24px 26px;border:1px solid var(--line);border-radius:18px;background:var(--surface);transition:border-color .16s}
+.door:hover,.door:focus-visible{border-color:var(--orange)}
+.door:focus-visible{outline:none}
+.door .lead{display:flex;align-items:center;gap:14px}
+.door .dot{width:14px;height:14px;border-radius:50%;background:var(--orange);flex:none}
+.door .title{font-family:var(--disp);font-weight:700;font-size:21px;letter-spacing:-.01em}
+.door .go{margin-left:auto;font-family:var(--disp);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--orange)}
+.door .blurb{color:var(--fg2);font-size:13.5px;line-height:1.5;margin:12px 0 0;max-width:52ch}
+.scribble{font-family:var(--hand);font-size:22px;color:var(--orange);line-height:1;margin:30px 0 -14px}
+
+.shelfhead{display:flex;align-items:baseline;gap:10px;margin:0 0 16px}
+.shelfhead h2{font-family:var(--disp);font-size:13px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--fg2);margin:0}
+.shelfhead .count{font-size:11.5px;color:var(--mute)}
+
+a.card{display:block;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:border-color .16s}
+a.card:hover,a.card:focus-visible{border-color:var(--orange)}
+a.card:focus-visible{outline:none}
+.tag{display:inline-block;font-family:var(--disp);font-weight:600;font-size:10px;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border-radius:999px;color:#2A2622;margin-bottom:9px}
+.name{font-family:var(--disp);font-weight:600;font-size:16.5px;letter-spacing:-.01em}
+.meta{color:var(--fg2);font-size:12.5px;margin-top:5px;line-height:1.45}
+.empty{color:var(--mute);font-size:13px;border:1.5px dashed var(--line);border-radius:14px;padding:18px 20px}
 </style></head><body><div class="wrap">
+
+<div class="eyebrow">my agentic life</div>
 <h1>Living Charts</h1>
-<div class="sub">Lauren's project shelf &middot; kept current by Janet</div>
+<p class="sub">Lauren's project shelf &middot; kept current by Janet</p>
+
+<div class="scribble">start here &#8600;</div>
+
+<a class="door" href="orbit/">
+  <span class="lead">
+    <span class="dot"></span>
+    <span class="title">The Orbit</span>
+    <span class="go">Open &rarr;</span>
+  </span>
+  <p class="blurb">Every world you're carrying, sized by what's open and coloured by what's actually happening inside. Start here — the charts below are the detail.</p>
+</a>
+
+<div class="shelfhead"><h2>The charts</h2><span class="count">3 live</span></div>
+
 <a class="card" href="reno/">
-<span class="tag" style="background:#12707F">RENO</span>
-<div class="name">Backyard build — double Gantt</div>
+<span class="tag" style="background:#7FA8A2">Reno</span>
+<div class="name">Backyard build &mdash; double Gantt</div>
 <div class="meta">Pool build + owner-builder lanes &middot; earliest fill ~25&ndash;28 Sep (per LDP info sheet) &middot; updated 29 Jul 2026</div>
 </a>
+
 <a class="card" href="crop-detox-comms/">
-<span class="tag" style="background:#3E7C50">CROP DETOX</span>
-<div class="name">Comms pipeline — kanban</div>
+<span class="tag" style="background:#A8B26A">Crop DeTox</span>
+<div class="name">Comms pipeline &mdash; kanban</div>
 <div class="meta">Prepware launch comms &middot; gated on page-live &middot; updated 26 Jul 2026</div>
 </a>
+
 <a class="card" href="front-of-house/">
-<span class="tag" style="background:#6C7A3F">FRONT OF HOUSE</span>
-<div class="name">Gate map — what can move now vs what waits</div>
+<span class="tag" style="background:#E5C36A">Front of house</span>
+<div class="name">Gate map &mdash; what can move now vs what waits</div>
 <div class="meta">3 gates: Dan's porch fix &middot; backyard budget &middot; house redo &middot; updated 26 Jul 2026</div>
 </a>
+
 <div class="empty">Crop DeTox, Unbound, bask &amp; more will appear here as charts are made.</div>
+
 </div></body></html>
