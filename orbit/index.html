@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Orbit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ground:#191C28; --ground2:#141723; --panel:#222634; --panel2:#272C3D;
+  --ink:#ECEAE1; --muted:#878CA0; --faint:#565B70; --hair:rgba(255,255,255,.08);
+  --you:#A79BE0;
+  --overdue:#E4796B; --stale:#E2A44B; --blocked:#7CA9E6; --scheduled:#B9A6E8;
+  --moving:#74C69D; --clear:#5A6078;
+  --disp:'Space Grotesk',system-ui,sans-serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(120% 90% at 50% -10%,#20243400,#141723 70%),var(--ground);color:var(--ink);font-family:var(--disp)}
+body{min-height:100vh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:26px 22px 60px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
+h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:6px 0 2px}
+.sub{color:var(--muted);font-size:13.5px;max-width:60ch;line-height:1.5}
+.readout{display:flex;flex-wrap:wrap;gap:18px;margin:20px 0 6px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.readout b{display:block;font-size:22px;color:var(--ink);font-weight:500;letter-spacing:.02em}
+.readout .r{min-width:78px}
+.readout .r.alarm b{color:var(--overdue)} .readout .r.warn b{color:var(--stale)}
+.cap{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:4px;letter-spacing:.03em}
+
+.stagewrap{position:relative;margin:14px 0 8px}
+.stage{position:relative;width:100%;aspect-ratio:1.42/1;max-height:600px}
+.rings{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;z-index:3}
+.center .dot{width:16px;height:16px;border-radius:50%;background:var(--you);margin:0 auto 7px;box-shadow:0 0 0 6px rgba(167,155,224,.14),0 0 30px 4px rgba(167,155,224,.35)}
+.center .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--you)}
+.node{position:absolute;transform:translate(-50%,-50%);z-index:2;border:0;background:none;cursor:pointer;padding:0;color:inherit;text-align:center;transition:transform .5s cubic-bezier(.2,.7,.2,1),opacity .5s}
+.node .body{border-radius:50%;background:var(--panel);border:1px solid var(--hair);position:relative;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:transform .18s,border-color .18s,box-shadow .18s}
+.node:hover .body,.node:focus-visible .body{transform:translateY(-3px);border-color:var(--st);box-shadow:0 10px 30px -12px #000,0 0 0 1px var(--st)}
+.node:focus-visible{outline:none}
+.node .halo{position:absolute;inset:-5px;border-radius:50%;border:1.5px solid var(--st);opacity:.55}
+.node .n{font-family:var(--mono);font-weight:600;font-size:19px;line-height:1;color:var(--ink)}
+.node .n small{font-size:10px;color:var(--muted);font-weight:400}
+.node .name{margin-top:9px;font-size:13px;font-weight:500;letter-spacing:-.01em;white-space:nowrap}
+.node .state{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--st);margin-top:2px}
+.pips{display:flex;gap:3px;justify-content:center;margin-top:5px}
+.pip{width:5px;height:5px;border-radius:50%}
+.drift{margin-top:2px;border:1px dashed var(--hair);border-radius:14px;background:linear-gradient(var(--ground2),transparent);padding:15px 18px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;cursor:pointer;transition:border-color .18s}
+.drift:hover{border-color:var(--stale)}
+.drift .big{font-family:var(--mono);font-size:30px;font-weight:600;color:var(--stale);line-height:1}
+.drift .txt{flex:1;min-width:220px}
+.drift .txt .t{font-weight:600;font-size:14px}
+.drift .txt .d{color:var(--muted);font-size:12.5px;line-height:1.45;margin-top:2px}
+.drift .go{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.08em}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono);font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.world{display:none}
+.back{border:0;background:none;color:var(--muted);font-family:var(--mono);font-size:12px;letter-spacing:.06em;cursor:pointer;padding:6px 0;display:inline-flex;gap:8px;align-items:center}
+.back:hover{color:var(--ink)}
+.whead{display:flex;align-items:baseline;gap:16px;flex-wrap:wrap;margin:6px 0 4px;border-bottom:1px solid var(--hair);padding-bottom:14px}
+.whead h2{font-size:26px;font-weight:600;margin:0;letter-spacing:-.01em}
+.whead .meta{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.blink{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--you);text-decoration:none;border:1px solid var(--hair);border-radius:7px;padding:4px 9px;transition:border-color .15s,color .15s}
+.blink:hover{border-color:var(--you)}
+.tlink{color:var(--muted);text-decoration:none;font-family:var(--mono);font-size:11px;margin-left:8px;opacity:.7}
+.tlink:hover{color:var(--you);opacity:1}
+.capbox{display:flex;gap:8px;margin:14px 0 2px;width:100%}
+.capbox input{flex:1;background:var(--panel);border:1px solid var(--hair);border-radius:9px;color:var(--ink);font-family:var(--disp);font-size:13px;padding:10px 12px}
+.capbox input:focus{outline:none;border-color:var(--you)}
+.capbox button{background:var(--you);border:0;border-radius:9px;color:#1b1524;font-weight:600;font-family:var(--disp);font-size:13px;padding:0 16px;cursor:pointer}
+.capbox button:disabled{opacity:.5;cursor:default}
+.capmsg{font-family:var(--mono);font-size:11px;color:var(--moving);margin-top:6px;min-height:14px}
+.laneblk{margin-top:22px}
+.lanehd{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--lc);margin-bottom:10px}
+.lanehd .ct{color:var(--muted)}
+.lanehd .bar{flex:1;height:1px;background:var(--hair)}
+.task{display:grid;grid-template-columns:14px 1fr auto;gap:12px;padding:11px 14px;border:1px solid var(--hair);border-left:2px solid var(--lc);border-radius:9px;background:var(--panel);margin-bottom:7px}
+.task .tk{font-size:14px;font-weight:500;line-height:1.35}
+.task .nx{color:var(--muted);font-size:12px;line-height:1.45;margin-top:3px}
+.task .age{font-family:var(--mono);font-size:10.5px;color:var(--faint);white-space:nowrap;text-align:right}
+.task .age .p{color:var(--overdue)}
+.dotm{width:8px;height:8px;border-radius:50%;background:var(--lc);margin-top:5px}
+.empty{color:var(--faint);font-size:13px;font-style:italic;padding:2px 0 4px}
+.foot{margin-top:34px;border-top:1px solid var(--hair);padding-top:14px;font-family:var(--mono);font-size:11px;color:var(--faint);line-height:1.6;letter-spacing:.02em}
+@media (max-width:640px){ .stage{display:none} h1{font-size:24px} .mlist{display:block} }
+.mlist{display:none;margin-top:14px}
+.mrow{display:flex;align-items:center;gap:12px;width:100%;border:0;border-left:3px solid var(--st);background:var(--panel);color:inherit;border-radius:9px;padding:13px 14px;margin-bottom:8px;cursor:pointer;text-align:left}
+.mrow .mn{font-family:var(--mono);font-size:17px;font-weight:600;min-width:34px}
+.mrow .mnm{flex:1;font-size:14px;font-weight:500}
+.mrow .mst{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--st)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="orbit">
+    <div class="eyebrow">Orbit &middot; snapshot <span id="ts"></span></div>
+    <h1>The shape of everything</h1>
+    <div class="sub">Every world you're carrying, sized by open load and coloured by what's actually happening inside it. Tap a world to drop into its real tasks.</div>
+    <div class="readout" id="readout"></div>
+    <div class="cap" id="cap"></div>
+    <div id="orbitcap"></div>
+
+    <div class="stagewrap">
+      <div class="stage" id="stage">
+        <svg class="rings" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <circle cx="50" cy="50" r="26" fill="none" stroke="rgba(255,255,255,.05)"/>
+          <circle cx="50" cy="50" r="42" fill="none" stroke="rgba(255,255,255,.045)"/>
+        </svg>
+        <div class="center"><div class="dot"></div><div class="lbl">You</div></div>
+      </div>
+      <div class="mlist" id="mlist"></div>
+    </div>
+
+    <div class="drift" id="drift" tabindex="0" role="button">
+      <div class="big" id="driftn">0</div>
+      <div class="txt">
+        <div class="t">Untriaged drift</div>
+        <div class="d">Tasks captured but never given a world. This is where the noise lives and the reason nothing feels like it's landing. Clear it in bask and the orbit tells the truth.</div>
+      </div>
+      <div class="go">open &rsaquo;</div>
+    </div>
+
+    <div class="legend">
+      <span><i style="background:var(--overdue)"></i>overdue</span>
+      <span><i style="background:var(--stale)"></i>stale &middot; 21d+ untouched</span>
+      <span><i style="background:var(--blocked)"></i>waiting on someone</span>
+      <span><i style="background:var(--scheduled)"></i>scheduled</span>
+      <span><i style="background:var(--moving)"></i>moving</span>
+    </div>
+  </div>
+
+  <div class="world" id="world">
+    <button class="back" id="back">&lsaquo; back to orbit</button>
+    <div class="whead"><h2 id="wname"></h2><div class="meta" id="wmeta"></div><span id="wlink"></span></div>
+    <div id="wcap"></div>
+    <div id="lanes"></div>
+  </div>
+
+  <div class="foot" id="foot"></div>
+</div>
+
+<script>
+const DATA = {"generated":"2026-08-26T03:20:06.675615+00:00","projects":[{"title":"Crop DeTox","id":"9621050a-76e7-4216-b53e-0f9288c48d17","open":1,"color":"teal"},{"title":"Queerimagined","id":"60568dcd-5ec2-422f-9128-ea886254346c","open":0,"color":"purple"},{"title":"Reno","id":"a82a46e4-25a3-4625-8f03-5553d524845e","open":3,"color":"rose"},{"title":"Low Tox Table","id":"07156520-71e6-40e5-9557-dcc61e7371f2","open":0,"color":"olive"},{"title":"Her Life Tools","id":"79a832ac-0c8c-4c87-9388-d9378f9fc4b9","open":0,"color":"pink"},{"title":"Home","id":"6b01edfb-2ac7-4578-94d8-49a9729df9a2","open":4,"color":"amber"},{"title":"To-Do List","id":"fb8d11e2-d759-491c-aa3c-24e4ea181098","open":1,"color":null},{"title":"Health","id":"bf79cc55-5928-497c-906d-5c3a9d130a41","open":0,"color":"amber"}],"tasks":[{"id":"a613f0bc-87b1-40be-a9fc-71e57d9916de","world":"Crop DeTox","title":"Sort international shipping","lane":"captured","status":"captured","priority":"none","updated_days":0,"scheduled":null,"waiting_on":null,"next":""},{"id":"9312fca4-8073-4c0c-9b43-7014bd452d10","world":"Reno","title":"Choose cladding for pool house + get quotes","lane":"stale","status":"active","priority":"high","updated_days":33,"scheduled":null,"waiting_on":null,"next":"Material and quantity to be decided. Needs a budget line."},{"id":"9652bf25-8e8d-4b52-82a4-7362c12f84ad","world":"Reno","title":"Choose decking material + get quotes","lane":"stale","status":"active","priority":"high","updated_days":33,"scheduled":null,"waiting_on":null,"next":"Material choice drives cost and lead time. Composite vs hardwood vs treated pine. Decking gates the pool fence install, so decide early. Needs a budget line."},{"id":"d4d3a302-d1f7-4520-a1cc-f718c01cccff","world":"Reno","title":"Choose + ORDER windows and doors for pool house","lane":"stale","status":"active","priority":"urgent","updated_days":33,"scheduled":null,"waiting_on":null,"next":"3-4 WEEK LEAD TIME from order (confirmed by Doors & Windows Brisbane). Pool house build is ~15-22 Aug, so these must be ordered by roughly EARLY AUGUST or the pool house can't be closed in before Mum arrives 18 Sep. Quot\u2026"},{"id":"49745167-698a-4458-a6b3-9a5a0bb59801","world":"Home","title":"FoH: New front door + gate at old front steps","lane":"someday","status":"someday","priority":"none","updated_days":null,"scheduled":null,"waiting_on":null,"next":"Part of the eventual house redo: current front door becomes the master suite, so visitors get routed straight past it (gate at the bottom of those steps) to the new front door. Path extends beyond carport at this stage t\u2026"},{"id":"0a272f78-3f45-4415-b103-ddf17a0faad8","world":"Home","title":"Look into sports vouchers for Lola (QLD FairPlay)","lane":"scheduled","status":"scheduled","priority":"medium","updated_days":null,"scheduled":"2026-09-05T14:00:00+00:00","waiting_on":null,"next":"Now branded 'Play On!' (was FairPlay). Up to $200 toward sport/active rec membership, rego or participation fees, ages 5-17. CHECK BEFORE APPLYING: 1. ELIGIBILITY TRAP - limit is one voucher per child per CALENDAR YEAR. \u2026"},{"id":"bb30c4b3-81a4-41e2-b007-3aa56faaf747","world":"Home","title":"call st george to match cards to accounts","lane":"scheduled","status":"scheduled","priority":"none","updated_days":0,"scheduled":"2026-09-01T18:00:00+00:00","waiting_on":null,"next":""},{"id":"45ab6104-d8ed-4e49-8ddf-c5573adc9038","world":"Home","title":"Replace car head unit power cord","lane":"scheduled","status":"captured","priority":"none","updated_days":0,"scheduled":"2026-09-02T06:56:00+00:00","waiting_on":null,"next":""},{"id":"0095ce13-ce4d-4ab4-a71e-ea41ad0aff6c","world":"To-Do List","title":"Tell car insurance to remove the locks add-on","lane":"scheduled","status":"scheduled","priority":"medium","updated_days":0,"scheduled":"2026-09-03T04:00:00+00:00","waiting_on":null,"next":""},{"id":"461af26d-8c7f-4ed1-8514-e10431222f95","world":"Floating / untriaged","title":"Update bask-operations skill + department-head projects once bask write endpoints ship","lane":"active","status":"active","priority":"none","updated_days":null,"scheduled":null,"waiting_on":null,"next":"DEPENDS ON the bask write-operations task landing first. The current bask-operations skill mandates capture-only behaviour and kill-lists (agents tell Lauren to delete manually) - that rule is exactly what built the pile\u2026"},{"id":"62cefc89-4a68-4f81-8cad-c682d3bd0f6a","world":"Floating / untriaged","title":"Restyle bask to the my agentic life paper theme (Claude Code)","lane":"active","status":"active","priority":"none","updated_days":0,"scheduled":null,"waiting_on":null,"next":"Reskin the bask app UI to the my agentic life brand - paper theme (Soft Paper bg, Warm Ink text, Burnt Orange lead accent, Space Grotesk + Inter + Caveat, no shadows/gradients, one Caveat annotation per screen). Theme/to\u2026"},{"id":"90af1ce7-9b76-4b01-ba39-c531ca3204e7","world":"Floating / untriaged","title":"Add write operations to bask (file / complete / reassign / soft-delete) + add-to-project UI","lane":"active","status":"active","priority":"none","updated_days":0,"scheduled":null,"waiting_on":null,"next":"Root cause of the task pile: bask API is capture-only, so floating tasks can only be dated or deleted (not filed), and the Claude project agents cannot close their own tasks - they leave manual delete instructions that n\u2026"},{"id":"7460cf3b-4159-4980-8e20-ae0f9352624a","world":"Floating / untriaged","title":"Sort birthday present for Clementine (Ziggy's friend)","lane":"scheduled","status":"active","priority":"none","updated_days":0,"scheduled":"2026-10-25T23:00:00+00:00","waiting_on":null,"next":"For Clementine's party on Sat 31 Oct (unicorn/rainbow theme, toddler age \u2014 for gift ideas). Only needed if going. Done = gift bought and wrapped, ready for the day."},{"id":"88040ad4-9571-45a9-896e-9f0f28fe90ac","world":"Floating / untriaged","title":"RSVP to Clementine's party (for Ziggy) \u2014 text/call Emily 0403 324 690 by 20/10","lane":"scheduled","status":"active","priority":"none","updated_days":0,"scheduled":"2026-10-16T23:00:00+00:00","waiting_on":null,"next":"Clementine (Ziggy's friend) birthday party. Sat 31 Oct, 9am, Broadwater Rockpools, Southport (unicorn/rainbow theme). RSVP by 20/10 to Emily on 0403 324 690. On the Family calendar as tentative. Done = RSVP sent (if yes,\u2026"},{"id":"ce7d04ab-c38e-453f-aa8a-2ab578ff529d","world":"Floating / untriaged","title":"Build OpenClaw bridge endpoint so Claude can hand briefs to Lesley directly","lane":"active","status":"active","priority":"none","updated_days":2,"scheduled":null,"waiting_on":null,"next":"Currently Janet/BOHO Claude can't talk to the OpenClaw team directly - handoffs (like the TL;DR build brief) are manual copy-paste. Set up a small authenticated endpoint on the OpenClaw side (same pattern as the bask Jan\u2026"},{"id":"45183bce-66fb-48a4-95e5-16e3db803a2d","world":"Floating / untriaged","title":"RSVP to Rudi's party \u2014 text Zoe 0439 700 624","lane":"scheduled","status":"active","priority":"none","updated_days":2,"scheduled":"2026-09-02T23:00:00+00:00","waiting_on":null,"next":"We're going to Rudi's 6th (Lola's friend), Sun 13 Sep, 9am\u201312pm, Lorikeet Park, Worongary. When you text Zoe (0439 700 624) to confirm, mention TWO things: (1) we'll arrive ~10am \u2014 driving back from Brisbane that morning\u2026"},{"id":"85862190-0f50-4444-a5fd-8ed927ad78b0","world":"Floating / untriaged","title":"Sort a 40th gift for Kate Howson (+ maybe a bottle for the afternoon)","lane":"scheduled","status":"active","priority":"none","updated_days":2,"scheduled":"2026-09-07T23:00:00+00:00","waiting_on":null,"next":"Kate Howson's 40th, cheese & wine afternoon Sat 12 Sep 2026 (adults only, RSVP'd yes). Milestone birthday \u2014 a thoughtful gift and/or a nice bottle for the day. Done = gift sorted and ready to take."},{"id":"35b3ab64-da7c-4e21-96ac-095cd077e0a0","world":"Floating / untriaged","title":"Buy birthday gift for Rudi's 6th (Lola's friend)","lane":"scheduled","status":"active","priority":"none","updated_days":null,"scheduled":"2026-09-08T23:00:00+00:00","waiting_on":null,"next":"For Rudi's 6th birthday party, Sun 13 Sep 2026 (Lola's friend; panda-themed party). Only needed if going \u2014 confirm RSVP first. Done = gift bought and wrapped, ready for the 13th."},{"id":"b1f4dbc9-0331-4102-9ab7-f28878ff2974","world":"Floating / untriaged","title":"RSVP to Rudi's 6th birthday party (Lola's friend) \u2014 text Zoe 0439 700 624","lane":"scheduled","status":"active","priority":"none","updated_days":2,"scheduled":"2026-09-02T23:00:00+00:00","waiting_on":null,"next":"Lola's friend Rudi turns 6. Sun 13 Sep 2026, 9am\u201312pm, Lorikeet Park, Skyridge Blvd, Worongary (panda theme). RSVP deadline Sat 6 Sept \u2014 text/call Zoe on 0439 700 624. Currently a 'probably'; on the Family calendar as te\u2026"},{"id":"6c7b2cdd-a833-416b-8b7c-247bc7648ea7","world":"Floating / untriaged","title":"Fix customer emails landing in cropdetox@gmail spam folder","lane":"active","status":"active","priority":"none","updated_days":6,"scheduled":null,"waiting_on":null,"next":"A genuine customer enquiry (Cassandra de Bruin, \"Website glitch\", 18 Aug 2026) landed in spam and was missed for 2 days. If her email spam-foldered, others likely are too - these are customer messages going unseen. Done \u2026"},{"id":"d42351ab-ad73-44b9-bcdb-215d25ed86ec","world":"Floating / untriaged","title":"Get copy of latest blood test results for Claude to review","lane":"scheduled","status":"active","priority":"none","updated_days":0,"scheduled":"2026-09-02T13:00:00+00:00","waiting_on":null,"next":"Reminder to obtain a copy of the most recent blood test results (from recent specialist visit / Her Medical Southport) so Claude can review them as part of the personal wellness baseline being built."},{"id":"5a952bc1-b8fc-45c6-9ca1-d240cb14b4fb","world":"Floating / untriaged","title":"Submit GCCC Form 1 plumbing permit once plumber confirmed","lane":"active","status":"active","priority":"none","updated_days":15,"scheduled":null,"waiting_on":null,"next":"Lodging plumbing permit (Form 1) yourself with City of Gold Coast rather than paying Jared/Certified BA. Everything is ready except the licensed plumber, who should be confirmed within a day or two. Ready to attach: - Mi\u2026"},{"id":"8377ebba-bef4-4199-9f08-9d4a77e80821","world":"Floating / untriaged","title":"Pay Gold Coast water & sewerage rates notice (account 810148210)","lane":"scheduled","status":"active","priority":"medium","updated_days":0,"scheduled":"2026-09-06T13:59:00+00:00","waiting_on":null,"next":"New water and sewerage rate notice issued by City of Gold Coast for account 810148210. Check notice for amount due and due date, then pay."},{"id":"c5fbbb64-3736-4552-b928-8ac70bf94b12","world":"Floating / untriaged","title":"Gorgias Inc payment of $10.00 processed (Crop DeTox)","lane":"reference","status":"reference","priority":"low","updated_days":22,"scheduled":null,"waiting_on":null,"next":"Stripe receipt #1314-8979 for Gorgias Inc subscription, paid Aug 2, 2026 from cropdetox@gmail.com account. Amount: $10.00."},{"id":"1f36489b-92e6-4706-b09d-4af51d2b3abf","world":"Floating / untriaged","title":"Chase up Lola's 2026 school photos with St Kevin's office","lane":"stale","status":"active","priority":"none","updated_days":27,"scheduled":null,"waiting_on":null,"next":"No order confirmation for Lola's 2026 school photos exists in either inbox \u2014 only Ziggy's daycare photos were ordered (Border Studios, April, $35). Consent form (EdSmart) was due 11 May 2026; unclear if completed. Email \u2026"},{"id":"d25af773-6c75-4841-9209-0c698e81eaf8","world":"Floating / untriaged","title":"Pay overdue $43.09 to City Fertility Centre Southside","lane":"scheduled","status":"active","priority":"urgent","updated_days":0,"scheduled":"2026-09-03T04:00:00+00:00","waiting_on":null,"next":"Ezypay payment to City Fertility Centre Southside failed due to insufficient funds. Transaction #102706559, failed 15 Jul 2026 12:06 PM, amount $43.09, VISA ending 0894. Pay outstanding amount via Ezypay online payment p\u2026"}]};
+const CONFIG = {"projectUrl":"https://bask-tau.vercel.app/project/{id}","taskUrl":"https://bask-tau.vercel.app/item/{id}","captureEndpoint":""};
+const LANEVAR={overdue:'--overdue',blocked:'--blocked',stale:'--stale',scheduled:'--scheduled',active:'--moving',captured:'--clear',waiting:'--blocked',someday:'--clear',reference:'--clear',other:'--clear'};
+const cssv=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const PID={}; DATA.projects.forEach(p=>PID[p.title]=p.id);
+function bucket(t){const l=t.lane; if(l==='waiting')return 'blocked'; if(['someday','reference'].includes(l))return 'other'; return l;}
+const tasks=DATA.tasks.map(t=>({...t,b:bucket(t)}));
+const worlds={}; for(const t of tasks){(worlds[t.world]=worlds[t.world]||[]).push(t);}
+const FLOAT='Floating / untriaged';
+function esc(s){return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function worldStats(name){
+  const ts=worlds[name]||[]; const by={}; for(const t of ts){by[t.b]=(by[t.b]||0)+1;}
+  const order=['overdue','stale','blocked','scheduled','active','captured','other'];
+  let primary='clear',best=0;
+  for(const k of order){ if((by[k]||0)>best){best=by[k];primary=k;} }
+  const stmap={overdue:['--overdue','overdue'],stale:['--stale','stuck'],blocked:['--blocked','waiting'],scheduled:['--scheduled','scheduled'],active:['--moving','moving'],captured:['--clear','queued'],other:['--clear','—'],clear:['--clear','clear']};
+  const [svar,slab]=stmap[primary]||stmap.clear;
+  return {open:ts.length,by,primary,svar,slab};
+}
+
+const realWorlds=Object.keys(worlds).filter(w=>w!==FLOAT);
+const filedOpen=realWorlds.reduce((a,w)=>a+worlds[w].length,0);
+const floatN=(worlds[FLOAT]||[]).length;
+const overdueN=tasks.filter(t=>t.b==='overdue').length;
+const staleN=tasks.filter(t=>t.b==='stale').length;
+document.getElementById('ts').textContent=new Date(DATA.generated).toLocaleString('en-AU',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Australia/Brisbane'})+' AEST';
+document.getElementById('readout').innerHTML=[
+ ['r',filedOpen,'open in worlds'],['r warn',floatN+'+','untriaged'],
+ ['r alarm',overdueN,'overdue'],['r warn',staleN,'stale'],['r',realWorlds.length,'active worlds'],
+].map(([c,n,l])=>`<div class="${c}"><b>${n}</b>${l}</div>`).join('');
+document.getElementById('cap').textContent='Read-only snapshot. Filed numbers are exact; untriaged is a floor (bask API caps at 200 per pull).';
+document.getElementById('driftn').textContent=floatN;
+
+// ---- capture (only if a token-safe proxy is configured) ----
+function captureBox(world, hostId){
+  if(!CONFIG.captureEndpoint) return;
+  const host=document.getElementById(hostId);
+  const wrap=document.createElement('div');
+  wrap.innerHTML=`<div class="capbox"><input placeholder="Drop a note${world?' into '+world:''}…"><button>Add</button></div><div class="capmsg"></div>`;
+  const inp=wrap.querySelector('input'),btn=wrap.querySelector('button'),msg=wrap.querySelector('.capmsg');
+  async function fire(){
+    const text=inp.value.trim(); if(!text) return;
+    btn.disabled=true; msg.style.color=cssv('--muted'); msg.textContent='adding…';
+    try{
+      const notes=(world?('→ '+world+'\n'):'')+text+'\n(captured from orbit)';
+      const r=await fetch(CONFIG.captureEndpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({title:text.slice(0,90),notes})});
+      if(!r.ok) throw 0;
+      inp.value=''; msg.style.color=cssv('--moving'); msg.textContent='captured to bask ✓';
+    }catch(e){ msg.style.color=cssv('--overdue'); msg.textContent='could not reach bask — try again'; }
+    btn.disabled=false;
+  }
+  btn.onclick=fire; inp.addEventListener('keydown',e=>{if(e.key==='Enter')fire();});
+  host.appendChild(wrap);
+}
+captureBox(null,'orbitcap');
+
+// ---- orbit layout ----
+const stage=document.getElementById('stage');
+const nodeWorlds=realWorlds.map(w=>({name:w,...worldStats(w)}));
+const inner=nodeWorlds.filter(w=>w.open>=10).sort((a,b)=>b.open-a.open);
+const outer=nodeWorlds.filter(w=>w.open<10).sort((a,b)=>b.open-a.open);
+const maxOpen=Math.max(...nodeWorlds.map(w=>w.open),1);
+const size=o=>Math.round(58+Math.sqrt(o/maxOpen)*74);
+function place(list,radius,startDeg){const n=list.length;list.forEach((w,i)=>{const a=(startDeg+i*(360/n))*Math.PI/180;w.x=50+Math.cos(a)*radius;w.y=50+Math.sin(a)*radius;w.d=size(w.open);});}
+place(inner,26,-90); place(outer,42,-62);
+[...inner,...outer].forEach((w,idx)=>{
+  const b=document.createElement('button');
+  b.className='node'; b.style.left=w.x+'%'; b.style.top=w.y+'%';
+  b.style.setProperty('--st',cssv(w.svar));
+  b.style.opacity=0; b.style.transform='translate(-50%,-50%) scale(.9)';
+  const pips=['overdue','stale','blocked','scheduled','active'].filter(k=>w.by[k]).slice(0,5)
+     .map(k=>`<span class="pip" style="background:${cssv(LANEVAR[k])}"></span>`).join('');
+  b.innerHTML=`<div class="body" style="width:${w.d}px;height:${w.d}px"><div class="halo"></div>
+      <div class="n">${w.open}<small> open</small></div></div>
+    <div class="name">${esc(w.name)}</div><div class="state">${w.slab}</div><div class="pips">${pips}</div>`;
+  b.onclick=()=>openWorld(w.name);
+  stage.appendChild(b);
+  requestAnimationFrame(()=>setTimeout(()=>{b.style.opacity=1;b.style.transform='translate(-50%,-50%) scale(1)';},60+idx*55));
+});
+document.getElementById('mlist').innerHTML=[...inner,...outer].map(w=>
+ `<button class="mrow" style="--st:${cssv(w.svar)}" data-w="${esc(w.name)}"><span class="mn">${w.open}</span><span class="mnm">${esc(w.name)}</span><span class="mst">${w.slab}</span></button>`).join('');
+document.querySelectorAll('.mrow').forEach(el=>el.onclick=()=>openWorld(el.dataset.w));
+
+// ---- world view ----
+function ageStr(t){const b=[];
+  if(t.b==='overdue')b.push('<span class="p">overdue</span>'); else if(t.priority&&t.priority!=='none')b.push(t.priority);
+  if(t.updated_days!=null)b.push(t.updated_days+'d'); if(t.waiting_on)b.push('→ '+esc(t.waiting_on));
+  return b.join(' &middot; ');}
+function openWorld(name){
+  const ts=(worlds[name]||[]).slice();
+  document.getElementById('orbit').style.display='none';
+  document.getElementById('world').style.display='block';
+  document.getElementById('wname').textContent=name;
+  const st=worldStats(name);
+  document.getElementById('wmeta').innerHTML=`${st.open} open`+(['overdue','stale','blocked'].filter(k=>st.by[k]).length?' &nbsp;·&nbsp; '+['overdue','stale','blocked'].filter(k=>st.by[k]).map(k=>`${st.by[k]} ${k==='blocked'?'waiting':k}`).join(' &nbsp;·&nbsp; '):'');
+  const wl=document.getElementById('wlink');
+  wl.innerHTML=(CONFIG.projectUrl&&PID[name])?`<a class="blink" href="${CONFIG.projectUrl.replace('{id}',PID[name])}" target="_blank" rel="noopener">open in bask ↗</a>`:'';
+  document.getElementById('wcap').innerHTML=''; captureBox(name==FLOAT?null:name,'wcap');
+  const order=['overdue','blocked','stale','scheduled','active','captured','other'];
+  const lab={overdue:'Overdue',blocked:'Waiting on someone',stale:'Stale',scheduled:'Scheduled',active:'Moving',captured:'Captured, not started',other:'Other'};
+  const host=document.getElementById('lanes'); host.innerHTML='';
+  for(const k of order){
+    const items=ts.filter(t=>t.b===k); if(!items.length)continue;
+    const v=LANEVAR[k]||'--clear';
+    const blk=document.createElement('div'); blk.className='laneblk';
+    blk.innerHTML=`<div class="lanehd" style="--lc:${cssv(v)}">${lab[k]} <span class="ct">${items.length}</span><span class="bar"></span></div>`+
+      items.map(t=>{const tl=(CONFIG.taskUrl)?` <a class="tlink" href="${CONFIG.taskUrl.replace('{id}',t.id)}" target="_blank" rel="noopener">open ↗</a>`:'';
+        return `<div class="task" style="--lc:${cssv(v)}"><div class="dotm"></div>
+        <div><div class="tk">${esc(t.title)}${tl}</div>${t.next?`<div class="nx">${esc(t.next)}</div>`:''}</div>
+        <div class="age">${ageStr(t)}</div></div>`;}).join('');
+    host.appendChild(blk);
+  }
+  window.scrollTo(0,0);
+}
+document.getElementById('back').onclick=()=>{document.getElementById('world').style.display='none';document.getElementById('orbit').style.display='block';};
+document.getElementById('drift').onclick=()=>openWorld(FLOAT);
+document.getElementById('drift').onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openWorld(FLOAT);}};
+document.getElementById('foot').innerHTML=`Phase 1 &middot; read-only orbit over bask &middot; ${tasks.length} open items across ${realWorlds.length} worlds + ${floatN} untriaged.<br>Regenerated by the orbit generator; producers write back in Phase 2.`;
+</script>
+</body>
+</html>
